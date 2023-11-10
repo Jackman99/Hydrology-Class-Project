@@ -2,6 +2,7 @@ import pandas as pd
 import Objects as obj
 import pickle
 import glob
+import os
 
 '''Create a List of Catchment objects and populate them with the data'''
 catchments = []
@@ -10,7 +11,8 @@ catchments = []
 XLS_file_path = 'CEE450_Fall2014_ ProjectCatchments.xls'  # Replace 'data.xlsx' with your file path
 excel_data = pd.read_excel(XLS_file_path, sheet_name='Sheet1')
 
-directory_path = r'C:\Users\jdrimer2\OneDrive - University of Illinois - Urbana\Classes\Hydrology\Project'
+# Get the directory of the current script
+directory_path = os.path.dirname(os.path.abspath(__file__))
 
 # Process CSV files based on the first two numbers in their names
 csv_file_names = []
