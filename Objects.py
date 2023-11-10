@@ -189,6 +189,5 @@ class Catchment:
         plt.xlabel('Date')
         plt.ylabel(attribute.replace('_', ' ').title())
         plt.title(f'{self.location} - {attribute.replace("_", " ").title()} Max Values Each Year')
-        plt.legend()
         plt.show()
 
