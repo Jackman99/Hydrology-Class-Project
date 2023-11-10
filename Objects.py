@@ -3,6 +3,25 @@ import matplotlib.pyplot as plt
 import datetime
 
 class WaterData:
+    """
+    A class to represent water data for a given date.
+
+    Attributes
+    ----------
+    date : str
+        The date of the water data in YYYY-MM-DD format.
+    precipitation : float
+        The amount of precipitation in millimeters.
+    potential_evaporation : float
+        The potential evaporation in millimeters.
+    total_streamflow : float
+        The total streamflow in cubic meters per second.
+    fast_flow : float
+        The fast flow component of streamflow in cubic meters per second.
+    slow_flow : float
+        The slow flow component of streamflow in cubic meters per second.
+    """
+
     def __init__(self, date, precipitation, potential_evaporation, total_streamflow, fast_flow, slow_flow):
         self.date = date
         self.precipitation = precipitation
@@ -12,6 +31,37 @@ class WaterData:
         self.slow_flow = slow_flow
 
 class Catchment:
+    """
+    A class representing a catchment.
+
+    Attributes:
+    -----------
+    mopex_site_id : str
+        The Mopex site ID of the catchment.
+    state : str
+        The state where the catchment is located.
+    location : str
+        The location of the catchment.
+    drainage_area : float
+        The drainage area of the catchment.
+    usgs_gage_id : str
+        The USGS gage ID of the catchment.
+    outlet_gage_longitude : float
+        The longitude of the outlet gage of the catchment.
+    outlet_gage_latitude : float
+        The latitude of the outlet gage of the catchment.
+    water_data : list
+        A list of WaterData objects representing the water data of the catchment.
+
+    Methods:
+    --------
+    add_water_data(year, month, day, precipitation, potential_evaporation, total_streamflow, fast_flow, slow_flow)
+        Adds water data to the catchment.
+    process_csv_file(file_path)
+        Processes a CSV file containing water data and adds it to the catchment.
+    plot_yearly_data(year, data_type='precipitation', average_over_month=False)
+        Plots the yearly data of the catchment for a given year and data type.
+    """
     def __init__(self, mopex_site_id, state, location, drainage_area, usgs_gage_id, outlet_gage_longitude, outlet_gage_latitude):
         self.location = location
         self.state = state
@@ -38,6 +88,7 @@ class Catchment:
                 new_water_data = WaterData(datetime.date(year, month, day), precip, pot_evap, total_flow, fast_flow, slow_flow)
                 self.water_data.append(new_water_data)
 
+    # Plotting Methods
     def plot_yearly_data(self, year, data_type='precipitation', average_over_month=False):
         data_to_plot = {
             'precipitation': 'precipitation',
@@ -83,6 +134,9 @@ class Catchment:
                 colors = ['blue', 'green', 'orange', 'red', 'purple']
                 for values, label, color in zip(data_values, labels, colors):
                     plt.plot(range(1, len(values) + 1), values, label=label, color=color)
+                plt.title(f'Flow Year {year}')
+                plt.xlabel('Day of the Year')
+                plt.ylabel(data_type.replace("_", " ").title())
                 plt.legend()
             else:
                 plt.plot(range(1, len(data_values) + 1), data_values, color='blue')
@@ -92,3 +146,48 @@ class Catchment:
 
         plt.tight_layout()
         plt.show()
+    # Chapter 6
+    # Parent Distribution and Extreme Value Distribution
+    def get_max_values_each_year(self, attribute='total_streamflow'):
+        max_values = []
+        max_dates = []
+
+        years = {}
+        for data in self.water_data:
+            year = data.date.year
+            if year not in years:
+                years[year] = []
+
+            years[year].append(data)
+
+        for year, data_list in years.items():
+            max_value = -float('inf')
+            max_date = None
+
+            for data in data_list:
+                value = getattr(data, attribute)
+                if value > max_value:
+                    max_value = value
+                    max_date = data.date
+
+            max_values.append(max_value)
+            max_dates.append(max_date)
+
+        return max_values, max_dates
+
+    def plot_max_values_each_year(self, attribute='total_streamflow'):
+        max_values, max_dates = self.get_max_values_each_year(attribute)
+
+        plt.figure(figsize=(10, 6))
+        all_dates = [data.date for data in self.water_data]
+        all_values = [getattr(data, attribute) for data in self.water_data]
+        plt.plot(all_dates, all_values, label='Time Series')
+
+        for date, value in zip(max_dates, max_values):
+            plt.scatter(date, value, color='red', s=50, label='Max Values')
+
+        plt.xlabel('Date')
+        plt.ylabel(attribute.replace('_', ' ').title())
+        plt.title(f'{self.location} - {attribute.replace("_", " ").title()} Max Values Each Year')
+        plt.show()
+
