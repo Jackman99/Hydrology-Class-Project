@@ -10,7 +10,7 @@ catchments = []
 XLS_file_path = 'CEE450_Fall2014_ ProjectCatchments.xls'  # Replace 'data.xlsx' with your file path
 excel_data = pd.read_excel(XLS_file_path, sheet_name='Sheet1')
 
-directory_path = r'C:\Users\ziro_\hydrology\Hydrology-Class-Project'
+directory_path = r'C:\Users\jdrimer2\OneDrive - University of Illinois - Urbana\Classes\Hydrology\Project'
 
 # Process CSV files based on the first two numbers in their names
 csv_file_names = []
