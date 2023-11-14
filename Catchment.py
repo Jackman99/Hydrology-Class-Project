@@ -101,7 +101,7 @@ class Catchment:
             'slow_flow': 'slow_flow'
         }
 
-
+        fontsize = 22
 
         if data_type == 'combination':
             data_columns = ['precipitation', 'total_streamflow', 'potential_evaporation', 'fast_flow', 'slow_flow']
@@ -119,8 +119,7 @@ class Catchment:
             overall_mean = sum(averages) / len(averages)
 
             # Plotting
-            plt.figure(figsize=(10, 6))
-            fontsize = 22
+            plt.figure(figsize=(15, 15))
             matplotlib.rc('xtick', labelsize=16) 
             matplotlib.rc('ytick', labelsize=16)
             # Set the fontsize for x-axis and y-axis tick labels
@@ -152,10 +151,10 @@ class Catchment:
                 colors = ['blue', 'green', 'orange', 'red', 'purple']
                 for values, label, color in zip(data_values, labels, colors):
                     plt.plot(range(1, len(values) + 1), values, label=label, color=color)
-                plt.title(f'Flow Year {year}', fontsize=fontsize)
+                plt.title(f'{self.location} - Year {year}', fontsize=fontsize)
                 plt.xlabel('Day of the Year', fontsize=fontsize)
-                plt.ylabel(data_type.replace("_", " ").title(), fontsize=fontsize)
-                plt.legend(fontsize=fontsize)
+                plt.ylabel('[mm]', fontsize=fontsize)
+                plt.legend(fontsize=10)
             else:
                 plt.plot(range(1, len(data_values) + 1), data_values, color='blue')
                 plt.title(f'{data_type.replace("_", " ").title()} for Year {year}', fontsize=fontsize)
@@ -224,4 +223,17 @@ class Catchment:
         plt.legend(fontsize=fontsize)
 
         plt.tight_layout()
+        plt.savefig(f'1 {self.location}_{attribute}_Flood_Frequency.png', dpi=300, bbox_inches='tight')
         plt.show()
+
+    def plot_Budyko(self, attribute='total_streamflow'):
+        # Plotting for a specific year
+        data_values = []
+
+        for water_day in self.water_data:
+            if water_day.date.year == year:
+                if data_to_plot == 'combination':
+                    values = [getattr(water_day, column) for column in data_columns]
+                    data_values.append(values)
+                else:
+                    data_values.append(getattr(water_day, data_column))
