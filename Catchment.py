@@ -225,3 +225,17 @@ class Catchment:
 
         plt.tight_layout()
         plt.show()
+
+    def budyko_curve_each_catchment(self):
+        
+        self.water_data.precipitation
+
+        Epprom=[]
+        Pprom=[]
+        Epyear={}
+        for data in self.water_data:
+            Ep=data.potential_evaporation
+
+
+
+        
