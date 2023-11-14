@@ -1,5 +1,5 @@
 import pandas as pd
-import Objects as obj
+import Catchment
 import pickle
 import glob
 import os
@@ -22,7 +22,7 @@ for file_path in glob.glob(f"{directory_path}/*_30years.csv"):
 # Iterate through the Excel data and create Catchment objects
 for index, row in excel_data.iterrows():
     
-    catchment = obj.Catchment(
+    catchment = Catchment.Catchment(
         row['MOPEX SITE ID'],
         row['STATE'],
         row['Location'],
