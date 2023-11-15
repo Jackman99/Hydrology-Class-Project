@@ -226,29 +226,7 @@ class Catchment:
         plt.savefig(f'1 {self.location}_{attribute}_Flood_Frequency.png', dpi=300, bbox_inches='tight')
         plt.show()
 
-    def budyko_curve_each_catchment(self):        
-        Ep_yearly=[]
-        Pp_yearly=[]
-        E_yearly=[]
-        Ip=0
-        IEp=0
-        Ie=0
-        for year in range(1972,2000):
-            Ip=0
-            IEp=0
-            for water_year in self.water_data:
-                if water_year.date.year==year:
-                    actual_evaporation=water_year.precipitation*(1-np.exp(-water_year.potential_evaporation)/water_year.precipitation)
-                    Total_act_evaporation=Ie+actual_evaporation
-                    Total_prec=Ip+water_year.precipitation
-                    Total_Ep=IEp+water_year.potential_evaporation
-            Ep_yearly.append(Total_Ep) 
-            Pp_yearly.append(Total_prec) 
-            E_yearly.append(Total_act_evaporation)
-        Aver_Ep=np.mean(Ep_yearly)
-        Aver_Pp=np.mean(Pp_yearly)
-        Aver_E=mp.mean(E_yearly)
-        plt.plot(Aver_Ep/Aver_Pp,Aver_E/Aver_Pp)
+   
 
 
 
