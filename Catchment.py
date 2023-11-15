@@ -101,7 +101,7 @@ class Catchment:
             'slow_flow': 'slow_flow'
         }
 
-
+        fontsize = 22
 
         if data_type == 'combination':
             data_columns = ['precipitation', 'total_streamflow', 'potential_evaporation', 'fast_flow', 'slow_flow']
@@ -119,8 +119,7 @@ class Catchment:
             overall_mean = sum(averages) / len(averages)
 
             # Plotting
-            plt.figure(figsize=(10, 6))
-            fontsize = 22
+            plt.figure(figsize=(15, 15))
             matplotlib.rc('xtick', labelsize=16) 
             matplotlib.rc('ytick', labelsize=16)
             # Set the fontsize for x-axis and y-axis tick labels
@@ -152,10 +151,10 @@ class Catchment:
                 colors = ['blue', 'green', 'orange', 'red', 'purple']
                 for values, label, color in zip(data_values, labels, colors):
                     plt.plot(range(1, len(values) + 1), values, label=label, color=color)
-                plt.title(f'Flow Year {year}', fontsize=fontsize)
+                plt.title(f'{self.location} - Year {year}', fontsize=fontsize)
                 plt.xlabel('Day of the Year', fontsize=fontsize)
-                plt.ylabel(data_type.replace("_", " ").title(), fontsize=fontsize)
-                plt.legend(fontsize=fontsize)
+                plt.ylabel('[mm]', fontsize=fontsize)
+                plt.legend(fontsize=10)
             else:
                 plt.plot(range(1, len(data_values) + 1), data_values, color='blue')
                 plt.title(f'{data_type.replace("_", " ").title()} for Year {year}', fontsize=fontsize)
@@ -224,17 +223,33 @@ class Catchment:
         plt.legend(fontsize=fontsize)
 
         plt.tight_layout()
+        plt.savefig(f'1 {self.location}_{attribute}_Flood_Frequency.png', dpi=300, bbox_inches='tight')
         plt.show()
 
-    def budyko_curve_each_catchment(self):
-        
-        self.water_data.precipitation
+    def budyko_curve_each_catchment(self):        
+        Ep_yearly=[]
+        Pp_yearly=[]
+        E_yearly=[]
+        Ip=0
+        IEp=0
+        Ie=0
+        for year in range(1972,2000):
+            Ip=0
+            IEp=0
+            for water_year in self.water_data:
+                if water_year.date.year==year:
+                    actual_evaporation=water_year.precipitation*(1-np.exp(-water_year.potential_evaporation)/water_year.precipitation)
+                    Total_act_evaporation=Ie+actual_evaporation
+                    Total_prec=Ip+water_year.precipitation
+                    Total_Ep=IEp+water_year.potential_evaporation
+            Ep_yearly.append(Total_Ep) 
+            Pp_yearly.append(Total_prec) 
+            E_yearly.append(Total_act_evaporation)
+        Aver_Ep=np.mean(Ep_yearly)
+        Aver_Pp=np.mean(Pp_yearly)
+        Aver_E=mp.mean(E_yearly)
+        plt.plot(Aver_Ep/Aver_Pp,Aver_E/Aver_Pp)
 
-        Epprom=[]
-        Pprom=[]
-        Epyear={}
-        for data in self.water_data:
-            Ep=data.potential_evaporation
 
 
 
